@@ -1,0 +1,111 @@
+
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(to bottom, #f9f9f9, #eaeaea);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #d4af37;
+  text-shadow: 1px 1px 2px #aaa;
+}
+
+.coin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.coin {
+  width: 150px;
+  height: 150px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 20px 5px #ffd700, inset 0 0 10px #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+}
+
+.coin:active {
+  transform: scale(0.95);
+}
+
+.inscription {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #d4af37;
+  text-shadow: 0 0 2px #fff;
+  text-align: center;
+  padding: 10px;
+}
+
+.counter p {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+#coinCount {
+  font-size: 2.5rem;
+  color: #d4af37;
+  text-shadow: 0 0 3px #fff;
+}
+
+/* Animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 20px 5px #ffd700, inset 0 0 10px #fff;
+  }
+  50% {
+    box-shadow: 0 0 30px 10px #ffd700, inset 0 0 15px #fff;
+  }
+  100% {
+    box-shadow: 0 0 20px 5px #ffd700, inset 0 0 10px #fff;
+  }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .coin {
+    width: 120px;
+    height: 120px;
+  }
+
+  .inscription {
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  #coinCount {
+    font-size: 2rem;
+  }
+}
