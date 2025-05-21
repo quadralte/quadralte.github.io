@@ -3,23 +3,390 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Holy Coin</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Marketplace | Buyer & Seller</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      background: #007bff;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .product {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      background: #fff;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #f1f1f1;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    @media (min-width: 600px) {
+      .product {
+        width: 48%;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .product {
+        width: 31%;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+    }
+
+    .success {
+      color: green;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Holy Coin</h1>
-    <div class="coin-container">
-      <div class="coin" id="coin">
-        <span class="inscription">Jesus is Lord</span>
+  <header>
+    <h1>🌐 Marketplace</h1>
+    <p>Buy and Sell Products Easily</p>
+  </header>
+  <main class="container">
+    <div id="roleSelect" class="card">
+      <h2>Select Role</h2>
+      <button class="btn" onclick="selectRole('buyer')">I am a Buyer</button>
+      <button class="btn" onclick="selectRole('seller')">I am a Seller</button>
+    </div>
+
+    <div id="sellerLogin" class="card hidden">
+      <h2>Seller Login</h2>
+      <input type="text" id="sellerName" placeholder="Name" />
+      <input type="email" id="sellerEmail" placeholder="Email" />
+      <input type="text" id="sellerPhone" placeholder="Phone Number" />
+      <input type="password" id="sellerPassword" placeholder="Password" />
+      <div class="error" id="loginError"></div>
+      <button class="btn" onclick="loginSeller()">Login</button>
+      <button class="btn" onclick="forgotPassword()">Forgot Password?</button>
+    </div>
+
+    <div id="sellerDashboard" class="card hidden">
+      <h2>Welcome, Seller!</h2>
+      <p>Use the button below to list your product.</p>
+      <button class="btn" onclick="showSellForm()">Sell</button>
+      <div id="sellerProducts" class="flex"></div>
+    </div>
+
+    <div id="sellForm" class="card hidden">
+      <h2>Sell a Product</h2>
+            <select id="productCategory">
+        <option value="">Select Category</option>
+        <option>Electronics</option>
+        <option>Fashion</option>
+        <option>Books</option>
+        <option>Services</option>
+      </select>
+      <input type="file" id="productImage" accept="image/*" />
+      <input type="text" id="productName" placeholder="Product Name" />
+      <textarea id="productDesc" placeholder="Product Description"></textarea>
+      <select id="productCountry">
+        <option value="">Select Country</option>
+        <option>USA</option>
+        <option>UK</option>
+        <option>Germany</option>
+        <option>Cameroon</option>
+      </select>
+      <input type="text" id="productLink" placeholder="Optional Link" />
+      <input type="text" id="productAddress" placeholder="Address" />
+      <input type="number" id="productPrice" placeholder="Price" />
+      <button class="btn" onclick="publishProduct()">Publish</button>
+    </div>
+
+    <div id="buyerPage" class="card hidden">
+      <h2>Browse Products</h2>
+      <select id="buyerCategory" onchange="filterProducts()">
+        <option value="">Select Category</option>
+        <option>Electronics</option>
+        <option>Fashion</option>
+        <option>Books</option>
+        <option>Services</option>
+      </select>
+      <select id="buyerCountry" onchange="filterProducts()">
+        <option value="">Select Country</option>
+        <option>USA</option>
+        <option>UK</option>
+        <option>Germany</option>
+        <option>Cameroon</option>
+      </select>
+      <div id="buyerProducts" class="flex"></div>
+    </div>
+
+    <div id="resetPassword" class="card hidden">
+      <h2>Reset Password</h2>
+      <input type="email" id="resetEmail" placeholder="Enter your email" />
+      <button class="btn" onclick="sendResetCode()">Send Code</button>
+      <div id="codeSection" class="hidden">
+        <input type="text" id="resetCode" placeholder="Enter 5-digit code" />
+        <button class="btn" onclick="verifyCode()">Verify</button>
+      </div>
+      <div id="newPasswordSection" class="hidden">
+        <input type="password" id="newPassword" placeholder="New Password" />
+        <button class="btn" onclick="changePassword()">Change Password</button>
       </div>
     </div>
-    <div class="counter">
-      <p>Holy Coins:</p>
-      <h2 id="coinCount">0</h2>
-    </div>
-  </div>
+  </main>
 
-  <script src="script.js"></script>
+  <footer>
+    <button class="btn" onclick="alert('WhatsApp: +237682164603')">Contact Developer for Details</button>
+  </footer>
+
+  <script>
+    let currentSeller = null;
+    let resetCode = null;
+
+    function selectRole(role) {
+      document.getElementById('roleSelect').classList.add('hidden');
+      if (role === 'seller') {
+        document.getElementById('sellerLogin').classList.remove('hidden');
+      } else {
+        document.getElementById('buyerPage').classList.remove('hidden');
+        filterProducts();
+      }
+    }
+
+    function loginSeller() {
+      const name = document.getElementById('sellerName').value.trim();
+      const email = document.getElementById('sellerEmail').value.trim();
+      const phone = document.getElementById('sellerPhone').value.trim();
+      const password = document.getElementById('sellerPassword').value;
+
+      if (!email || !password) {
+        document.getElementById('loginError').innerText = 'Email and password required.';
+        return;
+      }
+
+      let sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+      let seller = sellers.find(s => s.email === email);
+
+      if (seller) {
+        if (seller.password !== password) {
+          document.getElementById('loginError').innerText = 'Incorrect email or password';
+          return;
+        }
+      } else {
+        seller = { name, email, phone, password };
+        sellers.push(seller);
+        localStorage.setItem('sellers', JSON.stringify(sellers));
+      }
+
+      currentSeller = seller;
+      document.getElementById('sellerLogin').classList.add('hidden');
+      document.getElementById('sellerDashboard').classList.remove('hidden');
+      loadSellerProducts();
+    }
+
+    function showSellForm() {
+      document.getElementById('sellForm').classList.remove('hidden');
+    }
+      function publishProduct() {
+      const category = document.getElementById('productCategory').value;
+      const imageFile = document.getElementById('productImage').files[0];
+      const name = document.getElementById('productName').value;
+      const desc = document.getElementById('productDesc').value;
+      const country = document.getElementById('productCountry').value;
+      const link = document.getElementById('productLink').value;
+      const address = document.getElementById('productAddress').value;
+      const price = document.getElementById('productPrice').value;
+
+      if (!category || !imageFile || !name || !desc || !country || !address || !price) {
+        alert('Please fill all required fields.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageData = e.target.result;
+        const product = {
+          id: Date.now(),
+          category,
+          country,
+          name,
+          desc,
+          link,
+          address,
+          price,
+          image: imageData,
+          sellerEmail: currentSeller.email,
+          sellerPhone: currentSeller.phone
+        };
+
+        let products = JSON.parse(localStorage.getItem('products') || '[]');
+        products.push(product);
+        localStorage.setItem('products', JSON.stringify(products));
+        alert('Product published!');
+        document.getElementById('sellForm').reset();
+        loadSellerProducts();
+      };
+      reader.readAsDataURL(imageFile);
+    }
+
+    function loadSellerProducts() {
+      const container = document.getElementById('sellerProducts');
+      container.innerHTML = '';
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      const myProducts = products.filter(p => p.sellerEmail === currentSeller.email);
+      myProducts.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${p.image}" />
+          <h4>${p.name}</h4>
+          <p>${p.desc}</p>
+          <p>Price: ${p.price}</p>
+          <p>Email: ${p.sellerEmail}</p>
+          <p>Phone: ${p.sellerPhone}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterProducts() {
+      const category = document.getElementById('buyerCategory').value;
+      const country = document.getElementById('buyerCountry').value;
+      const container = document.getElementById('buyerProducts');
+      container.innerHTML = '';
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      const filtered = products.filter(p => 
+        (!category || p.category === category) && 
+        (!country || p.country === country)
+      );
+      filtered.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML = `
+          <img src="${p.image}" />
+          <h4>${p.name}</h4>
+          <p>${p.desc}</p>
+          <p>Price: ${p.price}</p>
+          <p>Email: ${p.sellerEmail}</p>
+          <p>Phone: ${p.sellerPhone}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function forgotPassword() {
+      document.getElementById('sellerLogin').classList.add('hidden');
+      document.getElementById('resetPassword').classList.remove('hidden');
+    }
+
+    function sendResetCode() {
+      const email = document.getElementById('resetEmail').value.trim();
+      const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+      const seller = sellers.find(s => s.email === email);
+      if (!seller) {
+        alert('Email not found.');
+        return;
+      }
+      resetCode = Math.floor(10000 + Math.random() * 90000).toString();
+      alert('Reset code (simulated email): ' + resetCode);
+      document.getElementById('codeSection').classList.remove('hidden');
+    }
+
+    function verifyCode() {
+      const code = document.getElementById('resetCode').value.trim();
+      if (code === resetCode) {
+        document.getElementById('newPasswordSection').classList.remove('hidden');
+      } else {
+                alert('Incorrect code.');
+      }
+    }
+
+    function changePassword() {
+      const email = document.getElementById('resetEmail').value.trim();
+      const newPass = document.getElementById('newPassword').value;
+      let sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
+      let seller = sellers.find(s => s.email === email);
+      if (seller) {
+        seller.password = newPass;
+        localStorage.setItem('sellers', JSON.stringify(sellers));
+        alert('Password changed!');
+        location.reload();
+      }
+    }
+  </script>
 </body>
 </html>
