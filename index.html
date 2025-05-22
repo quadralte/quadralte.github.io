@@ -1,392 +1,1314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Marketplace | Buyer & Seller</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HolyStream</title>
+    <style>
+        :root {
+            --primary-color: #ff0050; /* TikTok-ish pink/red */
+            --secondary-color: #00f2ea; /* TikTok-ish cyan */
+            --background-color: #010101;
+            --card-background: #121212;
+            --text-color: #ffffff;
+            --text-muted: #888888;
+            --border-color: #282828;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9f9f9;
-      color: #333;
-    }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
 
-    header {
-      background: #007bff;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    main {
-      padding: 2rem;
-    }
+        /* --- Header --- */
+        .app-header {
+            background-color: var(--card-background);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
 
-    .card {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
+        .admin-access-btn {
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: bold;
+            padding: 5px 10px;
+            margin-right: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .admin-access-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
 
-    .btn {
-      background: #007bff;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
 
-    .btn:hover {
-      background: #0056b3;
-    }
+        .header-right .auth-buttons button,
+        .header-right .user-profile-btn,
+        .header-right .upload-video-btn {
+                      background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .header-right .auth-buttons button:hover,
+        .header-right .user-profile-btn:hover,
+        .header-right .upload-video-btn:hover {
+            background-color: #d60043; /* Darker pink */
+        }
+        .user-profile-btn img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
 
-    .flex {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+        /* --- Main Content Area --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .product {
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 1rem;
-      background: #fff;
-      margin-bottom: 1rem;
-      width: 100%;
-    }
+        .video-feed {
+            width: 100%;
+            max-width: 600px; /* TikTok-like width */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    .product img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-    }
+        .video-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
 
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #f1f1f1;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
+        .video-player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 177.77%; /* 9:16 Aspect Ratio */
+            background-color: #000;
+        }
+        .video-player-wrapper video,
+        .video-player-wrapper img.image-post {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    @media (min-width: 600px) {
-      .product {
-        width: 48%;
-      }
-    }
 
-    @media (min-width: 900px) {
-      .product {
-        width: 31%;
-      }
-    }
+        .video-info {
+            padding: 15px;
+        }
+        .video-info .uploader-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .uploader-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid var(--primary-color);
+        }
+        .uploader-info .username {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .uploader-info .followers {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
 
-    .hidden {
-      display: none;
-    }
+        .video-caption {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-    .error {
-      color: red;
-      font-size: 0.9rem;
-    }
+        .video-actions {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        .video-actions button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            transition: color 0.3s;
+        }
+        .video-actions button:hover,
+        .video-actions button.active {
+            color: var(--primary-color);
+        }
+        .video-actions button span {
+            font-size: 12px;
+            margin-top: 3px;
+        }
 
-    .success {
-      color: green;
-      font-size: 0.9rem;
-    }
-  </style>
+
+        /* --- Modals / Dialogs --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--card-background);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+                      width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        .close-btn {
+            color: var(--text-muted);
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="file"],
+        .form-group textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .modal-content button[type="submit"], .modal-content .action-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .modal-content button[type="submit"]:hover, .modal-content .action-button:hover {
+            background-color: #d60043;
+        }
+        .form-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .form-link span {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* --- Admin Page --- */
+        #adminPage { display: none; padding: 20px; }
+        #adminPage h1 { color: var(--primary-color); text-align: center; }
+        .admin-section {
+            background-color: var(--card-background);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .admin-section h2 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .admin-user-list li, .admin-video-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-user-list li:last-child, .admin-video-list li:last-child { border-bottom: none; }
+        .admin-actions button {
+            background-color: var(--secondary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .admin-actions button.delete { background-color: #e74c3c; color: white; }
+        .admin-actions button.approve { background-color: #2ecc71; color: white; }
+        .admin-actions button.decline { background-color: #f39c12; color: white; }
+
+        /* Profile Page (Simplified) */
+        #profilePage { display: none; padding: 20px; max-width: 800px; margin: auto; }
+        .profile-header { display: flex; align-items: center; margin-bottom: 20px; }
+        .profile-header img { width: 100px; height: 100px; border-radius: 50%; margin-right: 20px; border: 3px solid var(--primary-color); }
+          .profile-info h2 { margin: 0 0 5px 0; font-size: 24px; }
+        .profile-stats { display: flex; gap: 20px; margin-bottom: 10px; }
+        .profile-stats span { font-size: 16px; }
+        .profile-wallet-info { margin-bottom: 20px; background-color: var(--card-background); padding: 15px; border-radius: 8px; }
+        .profile-wallet-info h3 { margin-top: 0; color: var(--secondary-color); }
+        .profile-videos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .profile-video-thumbnail { position: relative; padding-top: 100%; background-color: #333; border-radius: 5px; overflow: hidden;}
+        .profile-video-thumbnail img, .profile-video-thumbnail video { position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;}
+
+
+        /* Helper classes */
+        .hidden { display: none !important; }
+
+        /* Icons (simple text, replace with SVG/Font Awesome for better quality) */
+        .icon-like::before { content: '❤️'; margin-right: 5px; } /* Heart */
+        .icon-comment::before { content: '💬'; margin-right: 5px; } /* Speech bubble */
+        .icon-share::before { content: '↪️'; margin-right: 5px; } /* Share */
+        .icon-follow::before { content: '➕'; margin-right: 5px; }
+        .icon-upload::before { content: '⬆️'; margin-right: 5px; }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .video-feed {
+                padding: 0; /* Remove padding for edge-to-edge feel on mobile */
+            }
+            .modal-content {
+                width: 90%;
+            }
+            .app-header {
+                padding: 10px;
+            }
+            .logo { font-size: 20px; }
+            .admin-access-btn { font-size: 18px; padding: 4px 8px; }
+        }
+
+    </style>
 </head>
 <body>
-  <header>
-    <h1>🌐 Marketplace</h1>
-    <p>Buy and Sell Products Easily</p>
-  </header>
-  <main class="container">
-    <div id="roleSelect" class="card">
-      <h2>Select Role</h2>
-      <button class="btn" onclick="selectRole('buyer')">I am a Buyer</button>
-      <button class="btn" onclick="selectRole('seller')">I am a Seller</button>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button class="admin-access-btn" id="adminAccessBtn">+</button>
+                <div class="logo" onclick="showMainFeed()">HolyStream</div>
+            </div>
+            <div class="header-right">
+                <div id="authButtons" class="auth-buttons">
+                    <button id="loginBtn">Login</button>
+                    <button id="signupBtn">Sign Up</button>
+                </div>
+                <div id="userActions" class="hidden">
+                    <button class="upload-video-btn" id="uploadVideoBtn"><span class="icon-upload"></span>Upload</button>
+                    <button class="user-profile-btn" id="userProfileBtn">
+                        <img id="navProfilePic" src="placeholder-profile.png" alt="P">
+                        <span id="navUsername">User</span>
+                    </button>
+                    <button id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div id="videoFeed" class="video-feed">
+                <!-- Video cards will be injected here by JavaScript -->
+            </div>
+            <div id="profilePage" class="hidden">
+                <!-- User Profile Content -->
+            </div>
+            <div id="adminPage" class="hidden">
+                <!-- Admin Panel Content -->
+            </div>
+        </main>
+
     </div>
 
-    <div id="sellerLogin" class="card hidden">
-      <h2>Seller Login</h2>
-      <input type="text" id="sellerName" placeholder="Name" />
-      <input type="email" id="sellerEmail" placeholder="Email" />
-      <input type="text" id="sellerPhone" placeholder="Phone Number" />
-      <input type="password" id="sellerPassword" placeholder="Password" />
-      <div class="error" id="loginError"></div>
-      <button class="btn" onclick="loginSeller()">Login</button>
-      <button class="btn" onclick="forgotPassword()">Forgot Password?</button>
+    <!-- Modals -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('adminLoginModal')">&times;</span>
+            <h2>Admin Login</h2>
+            <p id="adminLoginError" class="error-message hidden"></p>
+            <div class="form-group">
+                <label for="adminKey">Admin Key:</label>
+                <input type="password" id="adminKey" required>
+            </div>
+            <button type="submit" onclick="handleAdminLogin()">Enter Admin Panel</button>
+        </div>
     </div>
 
-    <div id="sellerDashboard" class="card hidden">
-      <h2>Welcome, Seller!</h2>
-      <p>Use the button below to list your product.</p>
-      <button class="btn" onclick="showSellForm()">Sell</button>
-      <div id="sellerProducts" class="flex"></div>
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+                      <span class="close-btn" onclick="closeModal('authModal')">&times;</span>
+            <div id="loginForm">
+                <h2>Login to HolyStream</h2>
+                <p id="loginError" class="error-message hidden"></p>
+                <div class="form-group">
+                    <label for="loginUsername">Username:</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" onclick="handleLogin()">Login</button>
+                <p class="form-link">Don't have an account? <span onclick="showSignupForm()">Sign Up</span></p>
+            </div>
+            <div id="signupForm" class="hidden">
+                <h2>Sign Up for HolyStream</h2>
+                <p id="signupError" class="error-message hidden"></p>
+                <div class="form-group">
+                    <label for="signupUsername">Username:</label>
+                    <input type="text" id="signupUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password:</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <button type="submit" onclick="handleSignup()">Sign Up</button>
+                <p class="form-link">Already have an account? <span onclick="showLoginForm()">Login</span></p>
+            </div>
+        </div>
     </div>
 
-    <div id="sellForm" class="card hidden">
-      <h2>Sell a Product</h2>
-            <select id="productCategory">
-        <option value="">Select Category</option>
-        <option>Electronics</option>
-        <option>Fashion</option>
-        <option>Books</option>
-        <option>Services</option>
-      </select>
-      <input type="file" id="productImage" accept="image/*" />
-      <input type="text" id="productName" placeholder="Product Name" />
-      <textarea id="productDesc" placeholder="Product Description"></textarea>
-      <select id="productCountry">
-        <option value="">Select Country</option>
-        <option>USA</option>
-        <option>UK</option>
-        <option>Germany</option>
-        <option>Cameroon</option>
-      </select>
-      <input type="text" id="productLink" placeholder="Optional Link" />
-      <input type="text" id="productAddress" placeholder="Address" />
-      <input type="number" id="productPrice" placeholder="Price" />
-      <button class="btn" onclick="publishProduct()">Publish</button>
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('uploadModal')">&times;</span>
+            <h2>Upload Content</h2>
+            <p id="uploadError" class="error-message hidden"></p>
+            <div class="form-group">
+                <label for="uploadType">Content Type:</label>
+                <select id="uploadType" onchange="toggleUploadFields()">
+                    <option value="video">Video URL</option>
+                    <option value="image">Image File</option>
+                </select>
+            </div>
+            <div class="form-group" id="videoUrlField">
+                <label for="videoUrl">Video URL (e.g., .mp4 link):</label>
+                <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4">
+            </div>
+            <div class="form-group hidden" id="imageFileField">
+                <label for="imageFile">Image File:</label>
+                <input type="file" id="imageFile" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="uploadCaption">Caption:</label>
+                <textarea id="uploadCaption" placeholder="Write something..."></textarea>
+            </div>
+            <button type="submit" onclick="handleUpload()">Upload</button>
+        </div>
     </div>
 
-    <div id="buyerPage" class="card hidden">
-      <h2>Browse Products</h2>
-      <select id="buyerCategory" onchange="filterProducts()">
-        <option value="">Select Category</option>
-        <option>Electronics</option>
-        <option>Fashion</option>
-        <option>Books</option>
-        <option>Services</option>
-      </select>
-      <select id="buyerCountry" onchange="filterProducts()">
-        <option value="">Select Country</option>
-        <option>USA</option>
-        <option>UK</option>
-        <option>Germany</option>
-        <option>Cameroon</option>
-      </select>
-      <div id="buyerProducts" class="flex"></div>
-    </div>
 
-    <div id="resetPassword" class="card hidden">
-      <h2>Reset Password</h2>
-      <input type="email" id="resetEmail" placeholder="Enter your email" />
-      <button class="btn" onclick="sendResetCode()">Send Code</button>
-      <div id="codeSection" class="hidden">
-        <input type="text" id="resetCode" placeholder="Enter 5-digit code" />
-        <button class="btn" onclick="verifyCode()">Verify</button>
-      </div>
-      <div id="newPasswordSection" class="hidden">
-        <input type="password" id="newPassword" placeholder="New Password" />
-        <button class="btn" onclick="changePassword()">Change Password</button>
-      </div>
-    </div>
-  </main>
+    <script>
+        // --- Constants and Configuration ---
+        const ADMIN_KEY = "505033232";
+        const DEFAULT_PROFILE_PIC = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZjgwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIj48cGF0aCBkPSJNMTIgMUM3LjAzOCAxIDEgNy4wMzggMSAxMmMwIDQuOTYyIDYuMDM4IDExIDExIDExczExLTYuMDM4IDExLTExQzIzIDcuMDM4IDE2Ljk2MiAxIDEyIDF6bTAgM2M0LjQxMSAwIDggMy41ODkgOCA4cy0zLjU4OSA4LTggOC04LTMuNTg5LTgtOCA0LjQxMS04IDgtOHptMCAyYy0yLjc1NyAwLTUgMi4yNDMtNSA1czIuMjQzIDUgNSA1IDUtMi4yNDMgNS01LTUuNzU3LTUgNS01ek0xMiA4YTIgMiAwIDEwMCA0IDIgMiAwIDAwMC00em0wIDhjLTIuNjcxIDAtOCAxLjMzNC04IDR2MmgxNnYtMmMwLTIuNjY2LTUuMzI5LTQtOC00eiIvPjwvc3ZnPg=='; // Simple placeholder SVG
+        const VIDEO_PLACEHOLDERS = [
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+          ];
 
-  <footer>
-    <button class="btn" onclick="alert('WhatsApp: +237682164603')">Contact Developer for Details</button>
-  </footer>
+        // --- DOM Elements ---
+        const adminAccessBtn = document.getElementById('adminAccessBtn');
+        const videoFeedEl = document.getElementById('videoFeed');
+        const authButtonsEl = document.getElementById('authButtons');
+        const userActionsEl = document.getElementById('userActions');
+        const navUsernameEl = document.getElementById('navUsername');
+        const navProfilePicEl = document.getElementById('navProfilePic');
+        const mainContentVideoFeedEl = document.getElementById('videoFeed');
+        const profilePageEl = document.getElementById('profilePage');
+        const adminPageEl = document.getElementById('adminPage');
 
-  <script>
-    let currentSeller = null;
-    let resetCode = null;
+        // --- Application State (Simulated Backend using localStorage) ---
+        let users = JSON.parse(localStorage.getItem('holystream_users')) || [];
+        let videos = JSON.parse(localStorage.getItem('holystream_videos')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('holystream_currentUser')) || null;
+        let isAdminLoggedIn = false;
 
-    function selectRole(role) {
-      document.getElementById('roleSelect').classList.add('hidden');
-      if (role === 'seller') {
-        document.getElementById('sellerLogin').classList.remove('hidden');
-      } else {
-        document.getElementById('buyerPage').classList.remove('hidden');
-        filterProducts();
-      }
-    }
-
-    function loginSeller() {
-      const name = document.getElementById('sellerName').value.trim();
-      const email = document.getElementById('sellerEmail').value.trim();
-      const phone = document.getElementById('sellerPhone').value.trim();
-      const password = document.getElementById('sellerPassword').value;
-
-      if (!email || !password) {
-        document.getElementById('loginError').innerText = 'Email and password required.';
-        return;
-      }
-
-      let sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-      let seller = sellers.find(s => s.email === email);
-
-      if (seller) {
-        if (seller.password !== password) {
-          document.getElementById('loginError').innerText = 'Incorrect email or password';
-          return;
+        // --- Helper Functions ---
+        function saveData() {
+            localStorage.setItem('holystream_users', JSON.stringify(users));
+            localStorage.setItem('holystream_videos', JSON.stringify(videos));
+            localStorage.setItem('holystream_currentUser', JSON.stringify(currentUser));
         }
-      } else {
-        seller = { name, email, phone, password };
-        sellers.push(seller);
-        localStorage.setItem('sellers', JSON.stringify(sellers));
-      }
 
-      currentSeller = seller;
-      document.getElementById('sellerLogin').classList.add('hidden');
-      document.getElementById('sellerDashboard').classList.remove('hidden');
-      loadSellerProducts();
-    }
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+        }
 
-    function showSellForm() {
-      document.getElementById('sellForm').classList.remove('hidden');
-    }
-      function publishProduct() {
-      const category = document.getElementById('productCategory').value;
-      const imageFile = document.getElementById('productImage').files[0];
-      const name = document.getElementById('productName').value;
-      const desc = document.getElementById('productDesc').value;
-      const country = document.getElementById('productCountry').value;
-      const link = document.getElementById('productLink').value;
-      const address = document.getElementById('productAddress').value;
-      const price = document.getElementById('productPrice').value;
+        function generateRandomKey(length = 30) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
 
-      if (!category || !imageFile || !name || !desc || !country || !address || !price) {
-        alert('Please fill all required fields.');
-        return;
-      }
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            clearErrorMessages(modalId);
+        }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const imageData = e.target.result;
-        const product = {
-          id: Date.now(),
-          category,
-          country,
-          name,
-          desc,
-          link,
-          address,
-          price,
-          image: imageData,
-          sellerEmail: currentSeller.email,
-          sellerPhone: currentSeller.phone
-        };
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
 
-        let products = JSON.parse(localStorage.getItem('products') || '[]');
-        products.push(product);
-        localStorage.setItem('products', JSON.stringify(products));
-        alert('Product published!');
-        document.getElementById('sellForm').reset();
-        loadSellerProducts();
-      };
-      reader.readAsDataURL(imageFile);
-    }
+        function clearErrorMessages(modalId) {
+            const errorMessages = document.getElementById(modalId)?.querySelectorAll('.error-message');
+            errorMessages?.forEach(el => { el.classList.add('hidden'); el.textContent = ''; });
+        }
 
-    function loadSellerProducts() {
-      const container = document.getElementById('sellerProducts');
-      container.innerHTML = '';
-      const products = JSON.parse(localStorage.getItem('products') || '[]');
-      const myProducts = products.filter(p => p.sellerEmail === currentSeller.email);
-      myProducts.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-          <img src="${p.image}" />
-          <h4>${p.name}</h4>
-          <p>${p.desc}</p>
-          <p>Price: ${p.price}</p>
-          <p>Email: ${p.sellerEmail}</p>
-          <p>Phone: ${p.sellerPhone}</p>
-        `;
-        container.appendChild(div);
-      });
-    }
+        function displayError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+        
+        function showMainFeed() {
+            mainContentVideoFeedEl.style.display = 'flex';
+            profilePageEl.style.display = 'none';
+            adminPageEl.style.display = 'none';
+            renderVideoFeed();
+        }
 
-    function filterProducts() {
-      const category = document.getElementById('buyerCategory').value;
-      const country = document.getElementById('buyerCountry').value;
-      const container = document.getElementById('buyerProducts');
-      container.innerHTML = '';
-      const products = JSON.parse(localStorage.getItem('products') || '[]');
-      const filtered = products.filter(p => 
-        (!category || p.category === category) && 
-        (!country || p.country === country)
-      );
-      filtered.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'product';
-        div.innerHTML = `
-          <img src="${p.image}" />
-          <h4>${p.name}</h4>
-          <p>${p.desc}</p>
-          <p>Price: ${p.price}</p>
-          <p>Email: ${p.sellerEmail}</p>
-          <p>Phone: ${p.sellerPhone}</p>
-        `;
-        container.appendChild(div);
-      });
-    }
+        function showView(viewId) {
+            ['videoFeed', 'profilePage', 'adminPage'].forEach(id => {
+                document.getElementById(id).style.display = (id === viewId) ? (id === 'videoFeed' ? 'flex' : 'block') : 'none';
+            });
+        }
 
-    function forgotPassword() {
-      document.getElementById('sellerLogin').classList.add('hidden');
-      document.getElementById('resetPassword').classList.remove('hidden');
-    }
 
-    function sendResetCode() {
-      const email = document.getElementById('resetEmail').value.trim();
-      const sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-      const seller = sellers.find(s => s.email === email);
-      if (!seller) {
-        alert('Email not found.');
-        return;
-      }
-      resetCode = Math.floor(10000 + Math.random() * 90000).toString();
-      alert('Reset code (simulated email): ' + resetCode);
-      document.getElementById('codeSection').classList.remove('hidden');
-    }
+        // --- Authentication ---
+        document.getElementById('loginBtn').addEventListener('click', () => openModal('authModal'));
+        document.getElementById('signupBtn').addEventListener('click', () => { openModal('authModal'); showSignupForm(); });
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
-    function verifyCode() {
-      const code = document.getElementById('resetCode').value.trim();
-      if (code === resetCode) {
-        document.getElementById('newPasswordSection').classList.remove('hidden');
-      } else {
-                alert('Incorrect code.');
-      }
-    }
+        function showLoginForm() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            clearErrorMessages('authModal');
+        }
+        function showSignupForm() {
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+            clearErrorMessages('authModal');
+        }
 
-    function changePassword() {
-      const email = document.getElementById('resetEmail').value.trim();
-      const newPass = document.getElementById('newPassword').value;
-      let sellers = JSON.parse(localStorage.getItem('sellers') || '[]');
-      let seller = sellers.find(s => s.email === email);
-      if (seller) {
-        seller.password = newPass;
-        localStorage.setItem('sellers', JSON.stringify(sellers));
-        alert('Password changed!');
-        location.reload();
-      }
-    }
-  </script>
+        function handleSignup() {
+                      const username = document.getElementById('signupUsername').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            if (!username || !password) {
+                displayError('signupError', 'Username and password are required.');
+                return;
+            }
+            if (users.find(u => u.username === username)) {
+                displayError('signupError', 'Username already exists.');
+                return;
+            }
+
+            const newUser = {
+                id: generateId(),
+                username,
+                password, // In a real app, hash this!
+                profilePic: DEFAULT_PROFILE_PIC,
+                followers: [],
+                following: [],
+                walletKey: generateRandomKey(),
+                walletBalance: 0,
+                walletUnlocked: false,
+                videos: [], // Store IDs of videos uploaded by this user
+                likedVideos: [], // Store IDs of videos liked by this user
+                monetizationRequests: [] // { videoId, status: 'pending/approved/declined' }
+            };
+            users.push(newUser);
+            currentUser = newUser;
+            saveData();
+            updateNavUI();
+            closeModal('authModal');
+            showMainFeed();
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                saveData();
+                updateNavUI();
+                closeModal('authModal');
+                showMainFeed();
+            } else {
+                displayError('loginError', 'Invalid username or password.');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            isAdminLoggedIn = false; // Also log out from admin if they were logged in
+            saveData();
+            updateNavUI();
+            showMainFeed();
+        }
+
+        function updateNavUI() {
+            if (currentUser) {
+                authButtonsEl.classList.add('hidden');
+                userActionsEl.classList.remove('hidden');
+                navUsernameEl.textContent = currentUser.username;
+                navProfilePicEl.src = currentUser.profilePic || DEFAULT_PROFILE_PIC;
+            } else {
+                authButtonsEl.classList.remove('hidden');
+                userActionsEl.classList.add('hidden');
+            }
+        }
+
+        // --- Admin Panel ---
+        adminAccessBtn.addEventListener('click', () => {
+            if (isAdminLoggedIn) {
+                renderAdminPanel();
+                showView('adminPage');
+            } else {
+                openModal('adminLoginModal');
+            }
+        });
+
+        function handleAdminLogin() {
+            const key = document.getElementById('adminKey').value;
+            if (key === ADMIN_KEY) {
+                isAdminLoggedIn = true;
+                // Ensure admin user exists
+                let adminUser = users.find(u => u.username === 'Admin');
+                if (!adminUser) {
+                    adminUser = {
+                        id: 'admin001',
+                        username: 'Admin',
+                        password: generateRandomKey(), // Not used for login, but good to have
+                        profilePic: 'https://i.pravatar.cc/150?u=admin', // Distinct admin pic
+                        followers: Array(1000000000).fill(null).map((_,i) => `follower${i}`), // Simulated
+                        following: [],
+                        walletKey: generateRandomKey(),
+                        walletBalance: 0, // Admin doesn't need a wallet in this context
+                        walletUnlocked: true,
+                        videos: [],
+                        likedVideos: [],
+                        isAdmin: true
+                    };
+                                    users.push(adminUser);
+                    saveData();
+                }
+                // If current user is not admin, set current user to admin for admin actions
+                if(!currentUser || !currentUser.isAdmin) {
+                    // Do not automatically log in as admin for normal browsing, only for admin panel access
+                }
+
+                closeModal('adminLoginModal');
+                renderAdminPanel();
+                showView('adminPage');
+            } else {
+                displayError('adminLoginError', 'Invalid Admin Key.');
+            }
+        }
+        
+        function ensureAdminUser() {
+            let adminUser = users.find(u => u.username === 'Admin');
+            if (!adminUser) {
+                adminUser = {
+                    id: 'admin001',
+                    username: 'Admin',
+                    password: generateRandomKey(),
+                    profilePic: 'https://i.pravatar.cc/150?u=admin',
+                    followers: [], // Will be set to 1B dynamically for display
+                    following: [],
+                    walletKey: generateRandomKey(),
+                    walletBalance: 0,
+                    walletUnlocked: true,
+                    videos: [],
+                    likedVideos: [],
+                    isAdmin: true,
+                    isSpecialAdmin: true // Differentiates from normal users who might be named 'Admin'
+                };
+                users.push(adminUser);
+                saveData();
+            }
+             // Simulate 1B followers for admin when displaying
+            if(adminUser.followers.length < 10) adminUser.followers = Array(1000000000).fill(null).map((_,i) => `sim_follower_${i}`);
+            return adminUser;
+        }
+
+
+        function renderAdminPanel() {
+            if (!isAdminLoggedIn) return;
+            ensureAdminUser(); // Ensure admin user exists for their profile/posting
+
+            adminPageEl.innerHTML = `<h1>Admin Control Panel</h1>`;
+
+            // User Management Section
+            let userListHTML = '<ul>';
+            users.filter(u => !u.isSpecialAdmin).forEach(user => { // Filter out the special admin account from list
+                userListHTML += `
+                    <li>
+                        <span>${user.username} (ID: ${user.id}) - Wallet: ${user.walletUnlocked ? 'Unlocked' : 'Locked'}, Bal: $${user.walletBalance}</span>
+                        <div class="admin-actions">
+                            <input type="text" id="editName-${user.id}" placeholder="New Name" value="${user.username}">
+                            <button onclick="adminEditUsername('${user.id}')">Save Name</button>
+                            <button class="delete" onclick="adminDeleteUser('${user.id}')">Delete User</button>
+                        </div>
+                    </li>`;
+            });
+            userListHTML += '</ul>';
+            adminPageEl.innerHTML += `
+                <div class="admin-section">
+                    <h2>User Management</h2>
+                    ${userListHTML}
+                </div>`;
+
+            // Video Management Section
+            let videoListHTML = '<ul>';
+            videos.forEach(video => {
+                const uploader = users.find(u => u.id === video.userId);
+                videoListHTML += `
+                    <li>
+                        <span>Video ID: ${video.id} by ${uploader ? uploader.username : 'Unknown'} - Likes: ${video.likes.length}</span>
+                        <input type="text" id="editCaption-${video.id}" placeholder="New Caption" value="${video.caption}">
+                        <button onclick="adminEditVideoCaption('${video.id}')">Save Caption</button>
+                        <button class="delete" onclick="adminDeleteVideo('${video.id}')">Delete Video</button>
+                    </li>`;
+            });
+            videoListHTML += '</ul>';
+            adminPageEl.innerHTML += `
+                <div class="admin-section">
+                    <h2>Video Management</h2>
+                    ${videoListHTML}
+                           </div>`;
+            
+            // Monetization Requests Section
+            let monetizationRequestsHTML = '<ul>';
+            users.filter(u => !u.isSpecialAdmin).forEach(user => {
+                user.monetizationRequests.forEach(req => {
+                    monetizationRequestsHTML += `
+                        <li>
+                            <span>User: ${user.username}, Video ID: ${req.videoId}, Amount: $${req.amount}, Status: ${req.status}</span>
+                            ${req.status === 'pending' ? `
+                            <div class="admin-actions">
+                                <button class="approve" onclick="adminApproveMonetization('${user.id}', '${req.videoId}')">Approve</button>
+                                <button class="decline" onclick="adminDeclineMonetization('${user.id}', '${req.videoId}')">Decline</button>
+                            </div>` : ''}
+                        </li>`;
+                });
+            });
+            if(monetizationRequestsHTML === '<ul>') monetizationRequestsHTML += '<li>No pending requests.</li>';
+            monetizationRequestsHTML += '</ul>';
+            adminPageEl.innerHTML += `
+                <div class="admin-section">
+                    <h2>Monetization Requests</h2>
+                    ${monetizationRequestsHTML}
+                </div>`;
+        }
+
+        function adminEditUsername(userId) {
+            if (!isAdminLoggedIn) return;
+            const newUsername = document.getElementById(`editName-${userId}`).value.trim();
+            if (!newUsername) { alert("New username cannot be empty."); return; }
+            
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex > -1) {
+                // Update username in videos as well
+                videos.forEach(video => {
+                    if (video.userId === userId) {
+                        video.uploaderName = newUsername;
+                    }
+                });
+                users[userIndex].username = newUsername;
+                saveData();
+                renderAdminPanel(); // Re-render admin panel
+                renderVideoFeed(); // Re-render feed if usernames changed
+                if (currentUser && currentUser.id === userId) { // If admin edits their own (non-special admin) name
+                    currentUser.username = newUsername;
+                    updateNavUI();
+                }
+            }
+        }
+        
+        function adminEditVideoCaption(videoId) {
+            if (!isAdminLoggedIn) return;
+            const newCaption = document.getElementById(`editCaption-${videoId}`).value;
+            const videoIndex = videos.findIndex(v => v.id === videoId);
+            if (videoIndex > -1) {
+                videos[videoIndex].caption = newCaption;
+                saveData();
+                renderAdminPanel();
+                renderVideoFeed(); // Important to see caption changes
+            }
+        }
+
+        function adminDeleteUser(userId) {
+            if (!isAdminLoggedIn) return;
+            if (confirm('Are you sure you want to delete this user and all their videos? This cannot be undone.')) {
+                users = users.filter(u => u.id !== userId);
+                videos = videos.filter(v => v.userId !== userId); // Delete user's videos
+                // Also remove this user from other users' followers/following lists
+                users.forEach(u => {
+                    u.followers = u.followers.filter(id => id !== userId);
+                    u.following = u.following.filter(id => id !== userId);
+                });
+                if (currentUser && currentUser.id === userId) { // If admin deletes the currently logged-in user
+                    handleLogout(); // Log them out
+                }
+                saveData();
+                renderAdminPanel();
+                renderVideoFeed();
+            }
+        }
+
+        function adminDeleteVideo(videoId) {
+            if (!isAdminLoggedIn) return;
+            if (confirm('Are you sure you want to delete this video?')) {
+                          videos = videos.filter(v => v.id !== videoId);
+                // Remove from user's video list and liked lists
+                users.forEach(user => {
+                    user.videos = user.videos.filter(vid => vid !== videoId);
+                    user.likedVideos = user.likedVideos.filter(vid => vid !== videoId);
+                });
+                saveData();
+                renderAdminPanel();
+                renderVideoFeed();
+            }
+        }
+        
+        function adminApproveMonetization(userId, videoId) {
+            if (!isAdminLoggedIn) return;
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const request = user.monetizationRequests.find(r => r.videoId === videoId && r.status === 'pending');
+                if (request) {
+                    request.status = 'approved';
+                    // Simulate payout: In a real app, this would trigger a payment process.
+                    // Here, we just mark as approved. Actual withdrawal is "contact admin".
+                    // We can clear the balance that was "earned" for this request if needed.
+                    // user.walletBalance -= request.amount; // If amount was added pre-approval
+                    alert(`Monetization for video ${videoId} by ${user.username} approved. User should contact admin for withdrawal.`);
+                    saveData();
+                    renderAdminPanel();
+                }
+            }
+        }
+
+        function adminDeclineMonetization(userId, videoId) {
+            if (!isAdminLoggedIn) return;
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const request = user.monetizationRequests.find(r => r.videoId === videoId && r.status === 'pending');
+                if (request) {
+                    request.status = 'declined';
+                    // If amount was pre-emptively added to balance, revert it.
+                    // For this example, let's assume balance isn't touched until admin contact.
+                    alert(`Monetization for video ${videoId} by ${user.username} declined.`);
+                    saveData();
+                    renderAdminPanel();
+                }
+            }
+        }
+
+        // --- Video Feed & Interactions ---
+        function renderVideoFeed() {
+            videoFeedEl.innerHTML = ''; // Clear existing feed
+            // Sort videos: more likes and followers = higher (simplified: newest first for now, then likes)
+            const sortedVideos = [...videos].sort((a, b) => {
+                const uploaderA = users.find(u => u.id === a.userId);
+                const uploaderB = users.find(u => u.id === b.userId);
+                const scoreA = (a.likes.length * 10) + (uploaderA ? uploaderA.followers.length : 0);
+                const scoreB = (b.likes.length * 10) + (uploaderB ? uploaderB.followers.length : 0);
+                if (scoreB !== scoreA) return scoreB - scoreA;
+                return b.timestamp - a.timestamp; // Fallback to newest
+            });
+
+            if (sortedVideos.length === 0) {
+                videoFeedEl.innerHTML = '<p style="text-align:center; color: var(--text-muted);">No videos yet. Be the first to upload!</p>';
+            }
+
+            sortedVideos.forEach(video => {
+                const uploader = users.find(u => u.id === video.userId) || ensureAdminUser(); // Fallback to admin if user not found
+                const isLikedByCurrentUser = currentUser ? video.likes.includes(currentUser.id) : false;
+                const isFollowingUploader = currentUser ? uploader.followers.includes(currentUser.id) : false;
+                
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.innerHTML = `
+                    <div class="video-player-wrapper">
+                        ${video.type === 'image' ? 
+                            `<img src="${video.src}" alt="${video.caption || 'Image post'}" class="image-post">` :
+                                      `<video src="${video.src}" controls loop muted autoplay class="video-player"></video>`
+                        }
+                    </div>
+                    <div class="video-info">
+                        <div class="uploader-info" onclick="showUserProfile('${uploader.id}')">
+                            <img src="${uploader.profilePic || DEFAULT_PROFILE_PIC}" alt="${uploader.username}">
+                            <div>
+                                <span class="username">${uploader.username}</span>
+                                <span class="followers">${uploader.id === 'admin001' ? '1B' : uploader.followers.length} Followers</span>
+                            </div>
+                            ${currentUser && currentUser.id !== uploader.id && uploader.id !== 'admin001' ? // Don't show follow for self or special admin
+                                `<button class="follow-btn" style="margin-left:auto; background-color: ${isFollowingUploader ? 'var(--text-muted)' : 'var(--primary-color)'}; color:white; padding: 5px 10px; border:none; border-radius:5px;" onclick="event.stopPropagation(); toggleFollow('${uploader.id}', this)">
+                                    ${isFollowingUploader ? 'Following' : 'Follow'}
+                                </button>` : ''
+                            }
+                             ${uploader.id === 'admin001' && currentUser && currentUser.id !== 'admin001' ? // Special follow button for Admin
+                                `<button class="follow-btn" style="margin-left:auto; background-color: var(--primary-color); color:white; padding: 5px 10px; border:none; border-radius:5px;" onclick="event.stopPropagation(); followAdmin('${uploader.id}', this)">
+                                    Follow
+                                </button>` : ''
+                            }
+                        </div>
+                        <p class="video-caption">${video.caption || ''}</p>
+                        <div class="video-actions">
+                            <button class="${isLikedByCurrentUser ? 'active' : ''}" onclick="toggleLike('${video.id}', this)">
+                                <span class="icon-like"></span> <span class="like-count">${video.likes.length}</span>
+                            </button>
+                            <button><span class="icon-comment"></span> ${video.comments ? video.comments.length : 0}</button>
+                            <button><span class="icon-share"></span> Share</button>
+                        </div>
+                    </div>
+                `;
+                videoFeedEl.appendChild(videoCard);
+            });
+        }
+
+        function toggleLike(videoId, button) {
+            if (!currentUser) { alert('Please login to like videos.'); return; }
+
+            const video = videos.find(v => v.id === videoId);
+            const user = users.find(u => u.id === currentUser.id); // Refresh current user data
+
+            if (video && user) {
+                const likeIndex = video.likes.indexOf(user.id);
+                if (likeIndex > -1) { // Unlike
+                    video.likes.splice(likeIndex, 1);
+                    user.likedVideos = user.likedVideos.filter(id => id !== videoId);
+                    button.classList.remove('active');
+                } else { // Like
+                    video.likes.push(user.id);
+                    user.likedVideos.push(videoId);
+                    button.classList.add('active');
+                }
+                button.querySelector('.like-count').textContent = video.likes.length;
+                
+                // Monetization Check
+                checkMonetization(video.userId, videoId);
+                saveData();
+            }
+        }
+        
+        function followAdmin(adminId, button) {
+            if (!currentUser) { alert('Please login to follow.'); return; }
+            const admin = users.find(u => u.id === adminId && u.isSpecialAdmin);
+            if (admin) {
+                 // Simulate follower increase for admin - purely visual client side for this button
+                        admin.followers.push(currentUser.id); // Add current user to admin's followers list (for consistency if needed)
+                const loggedInUser = users.find(u => u.id === currentUser.id);
+                if (loggedInUser && !loggedInUser.following.includes(adminId)) {
+                    loggedInUser.following.push(adminId);
+                }
+                saveData();
+                button.textContent = 'Following';
+                button.style.backgroundColor = 'var(--text-muted)';
+                // Re-render feed might be too much, just update the button and relevant follower count
+                const adminProfileOnFeed = document.querySelector(`.uploader-info[onclick="showUserProfile('${adminId}')"] .followers`);
+                if(adminProfileOnFeed) adminProfileOnFeed.textContent = '1B+ Followers'; // Just a visual cue
+                alert('You are now following Admin! Their follower count is legendary!');
+            }
+        }
+
+
+        function toggleFollow(targetUserId, button) {
+            if (!currentUser) { alert('Please login to follow users.'); return; }
+            if (currentUser.id === targetUserId) { alert("You can't follow yourself."); return; }
+
+            const targetUser = users.find(u => u.id === targetUserId);
+            const actingUser = users.find(u => u.id === currentUser.id);
+
+            if (targetUser && actingUser) {
+                const followingIndex = actingUser.following.indexOf(targetUserId);
+                if (followingIndex > -1) { // Unfollow
+                    actingUser.following.splice(followingIndex, 1);
+                    targetUser.followers = targetUser.followers.filter(id => id !== actingUser.id);
+                    button.textContent = 'Follow';
+                    button.style.backgroundColor = 'var(--primary-color)';
+                } else { // Follow
+                    actingUser.following.push(targetUserId);
+                    targetUser.followers.push(actingUser.id);
+                    button.textContent = 'Following';
+                    button.style.backgroundColor = 'var(--text-muted)';
+                }
+                saveData();
+                renderVideoFeed(); // Re-render to update follower counts display potentially
+            }
+        }
+
+        // --- Upload ---
+        document.getElementById('uploadVideoBtn').addEventListener('click', () => {
+            if (!currentUser) { alert('Please login to upload.'); return; }
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('imageFile').value = '';
+            document.getElementById('uploadCaption').value = '';
+            toggleUploadFields(); // Set initial state based on dropdown
+            openModal('uploadModal');
+        });
+
+        function toggleUploadFields() {
+            const uploadType = document.getElementById('uploadType').value;
+            if (uploadType === 'video') {
+                document.getElementById('videoUrlField').classList.remove('hidden');
+                document.getElementById('imageFileField').classList.add('hidden');
+            } else { // image
+                document.getElementById('videoUrlField').classList.add('hidden');
+                document.getElementById('imageFileField').classList.remove('hidden');
+            }
+        }
+
+        async function handleUpload() {
+            if (!currentUser) return;
+
+            const caption = document.getElementById('uploadCaption').value;
+            const uploadType = document.getElementById('uploadType').value;
+            let src;
+            let fileType = 'video'; // default
+
+            if (uploadType === 'video') {
+                src = document.getElementById('videoUrl').value.trim();
+                if (!src) {
+                    displayError('uploadError', 'Please provide a video URL.');
+                    return;
+                }
+                // Simple validation for URL (very basic)
+                if (!src.startsWith('http://') && !src.startsWith('https://')) {
+                              displayError('uploadError', 'Please provide a valid video URL (starting with http or https).');
+                     return;
+                }
+            } else { // image
+                fileType = 'image';
+                const imageFile = document.getElementById('imageFile').files[0];
+                if (!imageFile) {
+                    displayError('uploadError', 'Please select an image file.');
+                    return;
+                }
+                if (imageFile.size > 5 * 1024 * 1024) { // 5MB limit for dataURL
+                    displayError('uploadError', 'Image file too large (max 5MB).');
+                    return;
+                }
+                try {
+                    src = await readFileAsDataURL(imageFile);
+                } catch (error) {
+                    displayError('uploadError', 'Error reading image file.');
+                    console.error("Error reading file:", error);
+                    return;
+                }
+            }
+
+
+            const uploader = users.find(u => u.id === currentUser.id); // Get fresh uploader data
+            if (!uploader) { console.error("Uploader not found for upload"); return; }
+
+            const newVideo = {
+                id: generateId(),
+                userId: currentUser.id,
+                uploaderName: uploader.username, // Store for easier rendering
+                uploaderPic: uploader.profilePic, // Store for easier rendering
+                type: fileType,
+                src,
+                caption,
+                likes: [],
+                comments: [], // Basic comment structure
+                timestamp: Date.now()
+            };
+
+            videos.push(newVideo);
+            uploader.videos.push(newVideo.id); // Add video ID to user's list of videos
+            
+            saveData();
+            closeModal('uploadModal');
+            showMainFeed(); // Go to feed to see the new video
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // --- Monetization ---
+        function checkMonetization(userId, videoId) {
+            const user = users.find(u => u.id === userId);
+            const video = videos.find(v => v.id === videoId);
+
+            if (!user || !video) return;
+
+            // Unlock wallet if ANY video reaches 10,000 likes
+            if (!user.walletUnlocked) {
+                const hasSuperVideo = videos.some(v => v.userId === userId && v.likes.length >= 10000);
+                if (hasSuperVideo) {
+                    user.walletUnlocked = true;
+                    alert(`Congratulations ${user.username}! Your wallet is now unlocked for reaching 10,000 likes on a video!`);
+                }
+            }
+
+            // Add $10 for every 100 likes on THIS video, IF wallet is unlocked
+            if (user.walletUnlocked) {
+                const currentMilestone = Math.floor(video.likes.length / 100);
+                // To prevent multiple payouts for the same 100-like milestone, we need to track it.
+                // Let's add a property to the video object for simplicity:
+                video.paidLikeMilestones = video.paidLikeMilestones || 0;
+
+                if (currentMilestone > video.paidLikeMilestones) {
+                    const earningsThisCheck = (currentMilestone - video.paidLikeMilestones) * 10;
+                    user.walletBalance += earningsThisCheck;
+                    video.paidLikeMilestones = currentMilestone;
+                    
+                    // Create a monetization request for admin
+                    user.monetizationRequests.push({
+                        videoId: video.id,
+                        amount: earningsThisCheck,
+                        timestamp: Date.now(),
+                        status: 'pending' // Admin needs to approve
+                                });
+
+                    alert(`Congrats ${user.username}! You earned $${earningsThisCheck} for your video hitting ${currentMilestone * 100} likes. Your balance is $${user.walletBalance}. Contact admin to redraw.`);
+                }
+            }
+            saveData(); // Save changes to user and video
+        }
+        
+        // --- User Profile Page ---
+        document.getElementById('userProfileBtn').addEventListener('click', () => {
+            if (currentUser) {
+                renderProfilePage(currentUser.id);
+                showView('profilePage');
+            }
+        });
+
+        function showUserProfile(userId) {
+            renderProfilePage(userId);
+            showView('profilePage');
+        }
+
+        function renderProfilePage(userId) {
+            const user = users.find(u => u.id === userId) || (userId === 'admin001' ? ensureAdminUser() : null);
+            if (!user) {
+                profilePageEl.innerHTML = `<p>User not found.</p>`;
+                return;
+            }
+
+            const userVideos = videos.filter(v => v.userId === userId).sort((a,b) => b.timestamp - a.timestamp);
+            let videosHTML = '';
+            if (userVideos.length > 0) {
+                userVideos.forEach(video => {
+                    videosHTML += `
+                    <div class="profile-video-thumbnail" onclick="/* Show video in a modal or navigate to it later */">
+                        ${video.type === 'image' ? 
+                            `<img src="${video.src}" alt="${video.caption || 'Image post'}">` :
+                            `<video src="${video.src}" muted></video>` /* Show thumbnail or first frame */
+                        }
+                        <div class="video-overlay-likes">❤️ ${video.likes.length}</div>
+                    </div>`;
+                });
+            } else {
+                videosHTML = '<p>No content posted yet.</p>';
+            }
+
+            profilePageEl.innerHTML = `
+                <div class="profile-header">
+                    <img src="${user.profilePic || DEFAULT_PROFILE_PIC}" alt="${user.username}">
+                    <div class="profile-info">
+                        <h2>${user.username} ${user.isSpecialAdmin ? '<span style="color:gold;font-size:1rem;">(Admin)</span>' : ''}</h2>
+                        <div class="profile-stats">
+                            <span><strong>${userVideos.length}</strong> Posts</span>
+                            <span><strong>${user.id === 'admin001' ? '1B' : user.followers.length}</strong> Followers</span>
+                            <span><strong>${user.following.length}</strong> Following</span>
+                        </div>
+                        ${currentUser && currentUser.id === user.id && !user.isSpecialAdmin ? // Edit profile button for own profile (not admin)
+                            `<button onclick="alert('Edit profile functionality to be implemented.')">Edit Profile</button>` : ''
+                        }
+                         ${currentUser && currentUser.id !== user.id && !user.isSpecialAdmin ? // Follow button for others (not admin)
+                            `<button class="follow-btn" id="profileFollowBtn-${user.id}" style="background-color: ${currentUser.following.includes(user.id) ? 'var(--text-muted)' : 'var(--primary-color)'}; color:white; padding: 5px 10px; border:none; border-radius:5px;" onclick="toggleFollow('${user.id}', this)">
+                                ${currentUser.following.includes(user.id) ? 'Following' : 'Follow'}
+                            </button>` : ''
+                        }
+                        ${user.id === 'admin001' && currentUser && currentUser.id !== 'admin001' ? // Special follow for Admin profile
+                            `<button class="follow-btn" style="background-color: var(--primary-color); color:white; padding: 5px 10px; border:none; border-radius:5px;" onclick="followAdmin('${user.id}', this)">
+                                Follow Admin
+                            </button>` : ''
+                        }
+                                  </div>
+                </div>
+
+                ${!user.isSpecialAdmin ? `
+                <div class="profile-wallet-info">
+                    <h3>Wallet</h3>
+                    <p><strong>Status:</strong> ${user.walletUnlocked ? 'Unlocked' : 'Locked (Needs 10k likes on a video)'}</p>
+                    <p><strong>Balance:</strong> $${user.walletBalance.toFixed(2)}</p>
+                    <p><strong>Account Key:</strong> ${user.walletKey}</p>
+                    ${user.walletBalance > 0 ? '<p><em>Contact admin to withdraw funds.</em></p>' : ''}
+                </div>` : ''}
+
+                <h3>Posts</h3>
+                <div class="profile-videos-grid">
+                    ${videosHTML}
+                </div>
+            `;
+        }
+
+        // --- Initial Setup ---
+        function initializeApp() {
+            ensureAdminUser(); // Make sure admin user exists from the start
+            // Create some dummy content if none exists, for demo purposes
+            if (videos.length === 0 && users.find(u=>u.isSpecialAdmin)) {
+                const admin = users.find(u=>u.isSpecialAdmin);
+                 // Sample videos for the Admin
+                VIDEO_PLACEHOLDERS.forEach((url, index) => {
+                    const videoId = generateId();
+                    videos.push({
+                        id: videoId,
+                        userId: admin.id,
+                        uploaderName: admin.username,
+                        uploaderPic: admin.profilePic,
+                        type: 'video',
+                        src: url,
+                        caption: `Admin's Awesome Video #${index + 1}! Check this out. #HolyStream #AdminPost`,
+                        likes: Array.from({length: Math.floor(Math.random() * 200)}, () => generateId()), // Random likes
+                        comments: [],
+                        timestamp: Date.now() - (index * 100000) // Stagger timestamps
+                    });
+                    admin.videos.push(videoId);
+                });
+
+                // Sample user and their video
+                if(!users.find(u => u.username === 'TestUser1')) {
+                    const testUser1Id = generateId();
+                    users.push({
+                        id: testUser1Id, username: 'TestUser1', password: 'password', 
+                        profilePic: 'https://i.pravatar.cc/150?u=testuser1', followers: [admin.id], following: [admin.id], 
+                        walletKey: generateRandomKey(), walletBalance: 0, walletUnlocked: false, videos: [], likedVideos: [], monetizationRequests: []
+                    });
+                    const testUser1 = users.find(u=>u.id === testUser1Id);
+                    const videoIdUser1 = generateId();
+                    videos.push({
+                        id: videoIdUser1, userId: testUser1.id, uploaderName: testUser1.username, uploaderPic: testUser1.profilePic,
+                        type: 'video', src: VIDEO_PLACEHOLDERS[0], caption: 'My first HolyStream! #newbie',
+                        likes: [], comments: [], timestamp: Date.now() - 50000
+                    });
+                    testUser1.videos.push(videoIdUser1);
+                }
+                saveData();
+            }
+
+            updateNavUI();
+            showMainFeed();
+        }
+
+        // Run on load
+        initializeApp();
+
+    </script>
 </body>
-</html>
+</html>       
